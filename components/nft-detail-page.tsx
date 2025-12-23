@@ -11,6 +11,7 @@ import { useNFTContract } from "@/hooks/use-nft-contract"
 import { BuyNFT } from "@/components/buy-nft"
 import { ListNFT } from "@/components/list-nft"
 import { useMint } from "@/contexts/mint-context"
+import { useMarketplace } from "@/hooks/use-marketplace"
 import Link from "next/link"
 
 interface NFTDetailPageProps {
@@ -20,7 +21,7 @@ interface NFTDetailPageProps {
 export function NFTDetailPage({ tokenId }: NFTDetailPageProps) {
   const { account } = useWeb3()
   const { contract } = useNFTContract()
-  const { getListing } = useMarketplace()
+  const { getListing, cancelListing } = useMarketplace()
   const { triggerRefresh } = useMint()
   const [loading, setLoading] = useState(true)
   const [tokenURI, setTokenURI] = useState<string>("")
@@ -68,6 +69,11 @@ export function NFTDetailPage({ tokenId }: NFTDetailPageProps) {
   }
 
   const handleListed = () => {
+    triggerRefresh()
+    loadNFTDetails()
+  }
+
+  const handleCancelled = async () => {
     triggerRefresh()
     loadNFTDetails()
   }
@@ -151,17 +157,35 @@ export function NFTDetailPage({ tokenId }: NFTDetailPageProps) {
           {isOwner ? (
             <>
               {isListed ? (
-                <Card className="p-6">
-                  <h3 className="font-semibold mb-4">Manage Listing</h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    This NFT is currently listed for sale.
-                  </p>
-                  <div className="space-y-2">
-                    <p className="text-sm">
-                      <span className="text-muted-foreground">Price: </span>
-                      <span className="font-semibold">{listing?.price} ETH</span>
+                <Card className="p-6 space-y-4">
+                  <div>
+                    <h3 className="font-semibold mb-4">Manage Listing</h3>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      This NFT is currently listed for sale.
                     </p>
+                    <div className="space-y-2 mb-4">
+                      <p className="text-sm">
+                        <span className="text-muted-foreground">Price: </span>
+                        <span className="font-semibold">{listing?.price} ETH</span>
+                      </p>
+                    </div>
                   </div>
+                  <Button
+                    variant="destructive"
+                    onClick={async () => {
+                      if (listing) {
+                        try {
+                          await cancelListing(tokenId)
+                          handleCancelled()
+                        } catch (error) {
+                          console.error("Error cancelling listing:", error)
+                        }
+                      }
+                    }}
+                    className="w-full"
+                  >
+                    Cancel Listing
+                  </Button>
                 </Card>
               ) : (
                 <Card className="p-6">
