@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { WalletConnect } from "./wallet-connect"
-import { Hexagon, ShoppingBag } from "lucide-react"
+import { Hexagon, ShoppingBag, Tag } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export function Header() {
@@ -20,6 +20,12 @@ export function Header() {
             <Button variant="ghost" size="sm">
               <ShoppingBag className="w-4 h-4 mr-2" />
               Marketplace
+            </Button>
+          </Link>
+          <Link href="/listings">
+            <Button variant="ghost" size="sm">
+              <Tag className="w-4 h-4 mr-2" />
+              My Listings
             </Button>
           </Link>
           <WalletConnect />

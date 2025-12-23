@@ -1,6 +1,12 @@
 import { MarketplacePage } from "@/components/marketplace-page"
+import { Header } from "@/components/header"
 
 export default function Marketplace() {
-  return <MarketplacePage />
+  return (
+    <div className="min-h-screen">
+      <Header />
+      <MarketplacePage />
+    </div>
+  )
 }
 
